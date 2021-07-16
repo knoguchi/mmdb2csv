@@ -17,10 +17,10 @@ var clickhouseFlag bool
 
 func removeUnsafeChars(strarr []string) []string {
 	var output = []string{}
+	replacer := strings.NewReplacer("\"", "", "'", "")
+
 	for _, str := range strarr {
-		// remove quotes
-		output = append(output, strings.Replace(str, "\"", "", -1))
-		output = append(output, strings.Replace(str, "'", "", -1))
+		output = append(output, strings.TrimSpace(replacer.Replace(str)))
 	}
 	return output
 }
