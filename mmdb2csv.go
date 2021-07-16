@@ -12,8 +12,8 @@ import (
 	"reflect"
 )
 
-func getTags(obj interface{}) []string {
-	var tags []string
+func getHeader(obj interface{}) []string {
+	tags := []string{"prefix"}
 	t := reflect.TypeOf(obj)
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
@@ -164,7 +164,7 @@ func main() {
 		case "GeoIP2Connections.mmdb":
 			record := geoip2.ConnectionType{}
 			if !headerWritten {
-				err = w.Write(getTags(record))
+				err = w.Write(getHeader(record))
 				if err != nil {
 					log.Fatal("can't write header")
 				}
@@ -241,7 +241,7 @@ func main() {
 		case "GeoIP2ISP.mmdb":
 			record := geoip2.ISP{}
 			if !headerWritten {
-				err = w.Write(getTags(record))
+				err = w.Write(getHeader(record))
 				if err != nil {
 					log.Fatal("can't write header")
 				}
