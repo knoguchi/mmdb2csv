@@ -12,7 +12,10 @@ import (
 	"strings"
 )
 
-func toChString(strarr []string) []string {
+// ClickHouse CSV mode
+var clickhouseFlag bool
+
+func removeUnsafeChars(strarr []string) []string {
 	var output = []string{}
 	for _, str := range strarr {
 		// remove quotes
@@ -124,7 +127,11 @@ func dumpCity(networks *maxminddb.Networks, writer *csv.Writer) (err error) {
 			fmt.Sprintf("%v", record.Traits.IsAnonymousProxy),
 			fmt.Sprintf("%v", record.Traits.IsSatelliteProvider),
 		)
-		err = writer.Write(values)
+		if clickhouseFlag {
+			err = writer.Write(removeUnsafeChars(values))
+		} else {
+			err = writer.Write(values)
+		}
 		if err != nil {
 			return err
 		}
@@ -152,7 +159,11 @@ func dumpConnections(networks *maxminddb.Networks, writer *csv.Writer) (err erro
 			subnet.String(),
 			record.ConnectionType,
 		}
-		err = writer.Write(values)
+		if clickhouseFlag {
+			err = writer.Write(removeUnsafeChars(values))
+		} else {
+			err = writer.Write(values)
+		}
 		if err != nil {
 			return err
 		}
@@ -217,7 +228,11 @@ func dumpCountry(networks *maxminddb.Networks, writer *csv.Writer) (err error) {
 			fmt.Sprintf("%v", record.Traits.IsAnonymousProxy),
 			fmt.Sprintf("%v", record.Traits.IsSatelliteProvider),
 		}
-		err = writer.Write(values)
+		if clickhouseFlag {
+			err = writer.Write(removeUnsafeChars(values))
+		} else {
+			err = writer.Write(values)
+		}
 		if err != nil {
 			return err
 		}
@@ -251,14 +266,21 @@ func dumpISP(networks *maxminddb.Networks, writer *csv.Writer) (err error) {
 			record.ISP,
 			record.Organization,
 		}
-		err = writer.Write(values)
+		if clickhouseFlag {
+			err = writer.Write(removeUnsafeChars(values))
+		} else {
+			err = writer.Write(values)
+		}
 		if err != nil {
 			return err
 		}
 	}
 	return nil
 }
+
 func main() {
+	flag.BoolVar(&clickhouseFlag, "c", false, "for ClickHouse dictionary")
+
 	flag.Parse()
 	if flag.NArg() == 0 {
 		log.Fatal("Please provide mmdb path")
