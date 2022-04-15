@@ -4,12 +4,13 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"github.com/oschwald/geoip2-golang"
-	"github.com/oschwald/maxminddb-golang"
 	"log"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/oschwald/geoip2-golang"
+	"github.com/oschwald/maxminddb-golang"
 )
 
 // ClickHouse CSV mode
@@ -180,6 +181,7 @@ func dumpCountry(networks *maxminddb.Networks, writer *csv.Writer) (err error) {
 
 		"country_geoname_id",
 		"country_is_in_european_union",
+		"country_iso_code",
 		"country_name", // pick en only
 
 		"registered_country_geoname_id",
@@ -213,6 +215,7 @@ func dumpCountry(networks *maxminddb.Networks, writer *csv.Writer) (err error) {
 
 			fmt.Sprintf("%d", record.Country.GeoNameID),
 			fmt.Sprintf("%v", record.Country.IsInEuropeanUnion),
+			record.Country.IsoCode,
 			record.Country.Names["en"],
 
 			fmt.Sprintf("%d", record.RegisteredCountry.GeoNameID),
