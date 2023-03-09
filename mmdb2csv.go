@@ -26,6 +26,10 @@ func removeUnsafeChars(strarr []string) []string {
 	return output
 }
 
+func containsIgnoreCase(s string, substr string) bool {
+	return strings.Contains(strings.ToLower(s), strings.ToLower(substr))
+}
+
 func dumpCity(networks *maxminddb.Networks, writer *csv.Writer) (err error) {
 	headers := []string{
 		"prefix",
@@ -314,15 +318,16 @@ func main() {
 		log.Fatalln(networks.Err())
 	}
 	var err2 error
-	switch fname {
-	case "GeoIP2City.mmdb":
+	if containsIgnoreCase(fname, "city") {
 		err2 = dumpCity(networks, writer)
-	case "GeoIP2Connections.mmdb":
+	} else if containsIgnoreCase(fname, "connections") {
 		err2 = dumpConnections(networks, writer)
-	case "GeoIP2Country.mmdb":
+	} else if containsIgnoreCase(fname, "country") {
 		err2 = dumpCountry(networks, writer)
-	case "GeoIP2ISP.mmdb":
+	} else if containsIgnoreCase(fname, "isp") {
 		err2 = dumpISP(networks, writer)
+	} else {
+		log.Fatal("Dump type not recognized, please rename mmdb file to contain any of the following strings: city, connections, country, or isp")
 	}
 	if err2 != nil {
 		log.Fatal(err2.Error())
